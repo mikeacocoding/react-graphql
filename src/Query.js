@@ -1,4 +1,4 @@
-const githubQuery = (pageCount, queryString) => ({
+const githubQuery = (pageCount, queryString, paginationKeyWord, paginationString) => ({
   query: `
     {
       viewer {
@@ -7,20 +7,30 @@ const githubQuery = (pageCount, queryString) => ({
       search(
         query: "${queryString} user:mikeacocoding sort:updated-desc"
         type: REPOSITORY
-        first: ${pageCount}
+        ${paginationKeyWord}: ${pageCount}
+        ${paginationString}
       ) {
         repositoryCount
-        nodes {
-          ... on Repository {
-            name
-            description
-            id
-            url
-            viewerSubscription
-            licenseInfo {
-              spdxId
+        edges {
+          cursor
+          node {
+            ... on Repository {
+              name
+              description
+              id
+              url
+              viewerSubscription
+              licenseInfo {
+                spdxId
+              }
             }
           }
+        }
+        pageInfo {
+          startCursor
+          endCursor
+          hasNextPage
+          hasPreviousPage
         }
       }
     }
